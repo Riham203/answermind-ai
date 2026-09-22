@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Welcome — AnswerMind AI</title>
+    <link rel="icon" href="{{ url_for('static', filename='favicon.svg') }}" type="image/svg+xml" />
+    <style>
+      :root {
+        --bg: #070b14;
+        --panel: rgba(17, 24, 46, 0.85);
+        --muted: #94a3b8;
+        --text: #f1f5f9;
+        --accent: #38bdf8;
+        --accent-dim: rgba(56, 189, 248, 0.15);
+        --border: rgba(30, 41, 59, 0.9);
+        --glow: rgba(56, 189, 248, 0.35);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Inter", sans-serif;
+        color: var(--text);
+        background: var(--bg);
+        overflow-x: hidden;
+      }
+
+      .ambient {
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        background:
+          radial-gradient(ellipse 80% 55% at 50% -10%, rgba(56, 189, 248, 0.18), transparent 55%),
+          radial-gradient(ellipse 60% 40% at 100% 20%, rgba(99, 102, 241, 0.12), transparent 50%),
+          radial-gradient(ellipse 50% 35% at 0% 80%, rgba(14, 165, 233, 0.1), transparent 45%),
+          linear-gradient(180deg, #0b1020 0%, var(--bg) 40%);
+        z-index: 0;
+      }
+
+      .grid-lines {
+        position: fixed;
+        inset: 0;
+        opacity: 0.04;
+        background-image:
+          linear-gradient(rgba(255, 255, 255, 0.06) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(255, 255, 255, 0.06) 1px, transparent 1px);
+        background-size: 48px 48px;
+        pointer-events: none;
+        z-index: 0;
+      }
+
+      .wrap {
+        position: relative;
+        z-index: 1;
+        max-width: 1080px;
+        margin: 0 auto;
+        padding: 24px 20px 48px;
+      }
+
+      nav {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        padding: 10px 4px 28px;
+        flex-wrap: wrap;
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        text-decoration: none;
+        color: var(--text);
+      }
+
+      .brand img {
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+      }
+
+      .brand span {
+        font-weight: 700;
+        font-size: 1.05rem;
+        letter-spacing: -0.02em;
+      }
+
+      .nav-actions {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+
+      .nav-actions .hello {
+        color: var(--muted);
+        font-size: 0.9rem;
+      }
+
+      .nav-actions .hello strong {
+        color: #e0f2fe;
+        font-weight: 600;
+      }
+
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 9px 16px;
+        border-radius: 10px;
+        font-size: 0.88rem;
+        font-weight: 600;
+        text-decoration: none;
+        border: 1px solid var(--border);
+        background: rgba(15, 23, 42, 0.6);
+        color: var(--text);
+        cursor: pointer;
+        transition: background 0.15s, border-color 0.15s;
+      }
+
+      .btn:hover {
+        background: rgba(30, 41, 59, 0.7);
+        border-color: rgba(56, 189, 248, 0.35);
+      }
+
+      .btn-primary {
+        background: linear-gradient(135deg, #38bdf8 0%, #0ea5e9 100%);
+        color: #04121a;
+        border: none;
+        box-shadow: 0 4px 24px var(--glow);
+      }
+
+      .btn-primary:hover {
+        filter: brightness(1.05);
+        border: none;
+      }
+
+      .hero {
+        padding: 32px 0 40px;
+      }
+
+      .hero-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 6px 12px;
+        border-radius: 999px;
+        background: var(--accent-dim);
+        border: 1px solid rgba(56, 189, 248, 0.25);
+        color: #7dd3fc;
+        font-size: 0.78rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        margin-bottom: 18px;
+      }
+
+      .hero h1 {
+        margin: 0;
+        font-size: clamp(1.85rem, 4.5vw, 2.6rem);
+        font-weight: 800;
+        letter-spacing: -0.03em;
+        line-height: 1.15;
+        background: linear-gradient(135deg, #f8fafc 0%, #bae6fd 45%, #38bdf8 100%);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+      }
+
+      .greeting-title {
+        margin: 0;
+        font-size: clamp(1.9rem, 4.8vw, 2.75rem);
+        font-weight: 800;
+        letter-spacing: -0.03em;
+        line-height: 1.2;
+        color: #f8fafc;
+      }
+
+      .brand-name {
+        background: linear-gradient(135deg, #e0f2fe 0%, #38bdf8 55%, #0ea5e9 100%);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+      }
+
+      .hero .subtitle {
+        margin: 14px 0 0;
+        max-width: 560px;
+        color: var(--muted);
+        font-size: 1.05rem;
+        line-height: 1.6;
+      }
+
+      .hero-meta {
+        margin-top: 10px;
+        font-size: 0.875rem;
+        color: var(--muted);
+      }
+
+      .cta-row {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 12px;
+        margin-top: 28px;
+      }
+
+      .cards {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 16px;
+        margin-top: 40px;
+      }
+
+      @media (max-width: 900px) {
+        .cards {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .card {
+        position: relative;
+        padding: 22px;
+        border-radius: 16px;
+        background: var(--panel);
+        border: 1px solid var(--border);
+        backdrop-filter: blur(12px);
+        transition: transform 0.2s, border-color 0.2s;
+      }
+
+      .card:hover {
+        transform: translateY(-2px);
+        border-color: rgba(56, 189, 248, 0.35);
+      }
+
+      .card-icon {
+        width: 42px;
+        height: 42px;
+        border-radius: 12px;
+        display: grid;
+        place-items: center;
+        font-size: 1.25rem;
+        margin-bottom: 14px;
+        background: rgba(56, 189, 248, 0.12);
+        border: 1px solid rgba(56, 189, 248, 0.2);
+      }
+
+      .card h3 {
+        margin: 0 0 8px;
+        font-size: 1.05rem;
+        font-weight: 700;
+      }
+
+      .card p {
+        margin: 0;
+        font-size: 0.88rem;
+        color: var(--muted);
+        line-height: 1.55;
+      }
+
+      .footer-note {
+        margin-top: 48px;
+        padding-top: 24px;
+        border-top: 1px solid var(--border);
+        font-size: 0.82rem;
+        color: #f87171;
+        line-height: 1.5;
+        max-width: 720px;
+      }
+
+      form.inline {
+        display: inline;
+        margin: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="ambient"></div>
+    <div class="grid-lines"></div>
+    <div class="wrap">
+      <nav>
+        <a class="brand" href="{{ url_for('dashboard') }}">
+          <img src="{{ url_for('static', filename='favicon.svg') }}" alt="" width="36" height="36" />
+          <span>AnswerMind AI</span>
+        </a>
+        <div class="nav-actions">
+          {% if logged_in %}
+          <span class="hello">Hello, <strong>{{ username }}</strong></span>
+          <a class="btn" href="{{ url_for('chat') }}">Legal assistant</a>
+          <form class="inline" method="POST" action="{{ url_for('logout') }}">
+            <button type="submit" class="btn">Logout</button>
+          </form>
+          {% else %}
+          <a class="btn" href="{{ url_for('login') }}">Login</a>
+          <a class="btn btn-primary" href="{{ url_for('signup') }}">Sign up</a>
+          {% endif %}
+        </div>
+      </nav>
+
+      <section class="hero">
+        <div class="hero-badge">
+          <span aria-hidden="true">◆</span>
+          Indian law · RAG-powered
+        </div>
+        {% if logged_in %}
+        <h1>Your desk for Constitution, IPC &amp; BNS</h1>
+        <p class="subtitle">
+          Ask structured legal questions with citations pulled from your ingested documents. Responses stream in clear, advocate-style language—with source panels you can verify.
+        </p>
+        <p class="hero-meta">Signed in as {{ user_email }}</p>
+        <div class="cta-row">
+          <a class="btn btn-primary" href="{{ url_for('chat') }}">Start a conversation</a>
+          <a class="btn" href="{{ url_for('chat') }}">Open legal assistant</a>
+        </div>
+        {% else %}
+        <h1 class="greeting-title">Hi — I&apos;m <span class="brand-name">AnswerMind AI</span></h1>
+        <p class="subtitle">
+          I help you explore Indian law across the Constitution of India, the Indian Penal Code (IPC), and the Bharatiya Nyaya Sanhita (BNS)—with retrieval-backed answers and clear citations. Create an account or sign in to start chatting.
+        </p>
+        <div class="cta-row">
+          <a class="btn btn-primary" href="{{ url_for('login') }}">Login</a>
+          <a class="btn" href="{{ url_for('signup') }}">Sign up</a>
+        </div>
+        {% endif %}
+
+        <div class="cards">
+          <article class="card">
+            <div class="card-icon" aria-hidden="true">📜</div>
+            <h3>Constitution of India</h3>
+            <p>Fundamental rights, directive principles, and constitutional remedies—grounded in retrieved articles from your indexed text.</p>
+          </article>
+          <article class="card">
+            <div class="card-icon" aria-hidden="true">⚖️</div>
+            <h3>IPC (1860)</h3>
+            <p>Historical penal provisions for comparison and context when your materials include the Indian Penal Code.</p>
+          </article>
+          <article class="card">
+            <div class="card-icon" aria-hidden="true">📘</div>
+            <h3>BNS (2023)</h3>
+            <p>Structured answers that distinguish the new Bharatiya Nyaya Sanhita from IPC where both appear in your corpus.</p>
+          </article>
+        </div>
+
+        <p class="footer-note">
+          Legal Disclaimer: This tool provides informational assistance only and does not constitute formal legal advice. Consult a qualified advocate for case-specific guidance.
+        </p>
+      </section>
+    </div>
+  </body>
+</html>

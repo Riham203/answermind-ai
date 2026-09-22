@@ -1,0 +1,14 @@
+venv/
+.env
+__pycache__/
+*.pyc
+
+# Local Data & Databases
+users.db
+chroma_db/
+data/*.pdf
+
+# IDE & System Files
+.DS_Store
+.vscode/
+.idea/

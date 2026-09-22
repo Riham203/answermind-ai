@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sign Up — AnswerMind AI</title>
+    <link rel="icon" href="{{ url_for('static', filename='favicon.svg') }}" type="image/svg+xml" />
+    <style>
+      :root {
+        --bg: #0b1020;
+        --panel: #11182e;
+        --text: #e2e8f0;
+        --muted: #94a3b8;
+        --accent: #38bdf8;
+        --danger: #fda4af;
+        --border: #1e293b;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        background: radial-gradient(circle at top, #131c38 0%, var(--bg) 45%);
+        color: var(--text);
+        font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+      }
+      .card {
+        width: min(420px, 92vw);
+        background: color-mix(in oklab, var(--panel), black 6%);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        padding: 20px;
+      }
+      h1 { margin: 0 0 6px; font-size: 1.25rem; }
+      p { margin: 0 0 16px; color: var(--muted); }
+      label { display: block; margin: 10px 0 6px; font-size: 0.9rem; }
+      input {
+        width: 100%;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        background: #0f172a;
+        color: var(--text);
+        padding: 10px 12px;
+      }
+      button {
+        width: 100%;
+        margin-top: 14px;
+        border: 0;
+        border-radius: 10px;
+        background: var(--accent);
+        color: #04121a;
+        font-weight: 700;
+        padding: 10px 12px;
+        cursor: pointer;
+      }
+      .error {
+        margin-top: 10px;
+        color: var(--danger);
+        font-size: 0.9rem;
+      }
+      .link {
+        margin-top: 14px;
+        font-size: 0.9rem;
+        color: var(--muted);
+      }
+      a { color: #bae6fd; }
+    </style>
+  </head>
+  <body>
+    <main class="card">
+      <h1>Create your account</h1>
+      <p>Sign up to use AnswerMind AI.</p>
+      <form method="POST">
+        <label for="username">Username</label>
+        <input id="username" name="username" type="text" minlength="2" required />
+        <label for="email">Email</label>
+        <input id="email" name="email" type="email" required />
+        <label for="password">Password</label>
+        <input id="password" name="password" type="password" minlength="6" required />
+        <label for="confirm_password">Confirm Password</label>
+        <input id="confirm_password" name="confirm_password" type="password" minlength="6" required />
+        <button type="submit">Sign Up</button>
+      </form>
+      {% if error %}
+      <div class="error">{{ error }}</div>
+      {% endif %}
+      <div class="link">
+        <a href="{{ url_for('dashboard') }}">← Back to home</a>
+      </div>
+      <div class="link">
+        Already have an account? <a href="/login">Login</a>
+      </div>
+    </main>
+  </body>
+</html>
